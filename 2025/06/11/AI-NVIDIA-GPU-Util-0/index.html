@@ -15,7 +15,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://lm2ei.xyz/picture/2weima.com.png">
 <meta property="article:published_time" content="2025-06-11T13:23:43.000Z">
-<meta property="article:modified_time" content="2025-06-11T13:26:23.106Z">
+<meta property="article:modified_time" content="2025-06-11T13:27:40.052Z">
 <meta property="article:author" content="lm2ei Jen">
 <meta property="article:tag" content="AI">
 <meta property="article:tag" content="NVIDIA">
@@ -117,18 +117,18 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$nvidia</span>-smi</span><br><span class="line">|-------------------------------+----------------------+----------------------+</span><br><span class="line">| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |</span><br><span class="line">| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |</span><br><span class="line">|                               |                      |               MIG M. |</span><br><span class="line">|===============================+======================+======================|</span><br><span class="line">|   0  Tesla V100-SXM2...  Off  | 00000000:1A:00.0 Off |                    0 |</span><br><span class="line">| N/A   42C    P0    67W / 300W |   2602MiB / 32510MiB |    100%      Default |</span><br><span class="line">|                               |                      |                  N/A |</span><br><span class="line">+-------------------------------+----------------------+----------------------+</span><br></pre></td></tr></table></figure>
 <h1 id="GPU-Util-误导"><a href="#GPU-Util-误导" class="headerlink" title="GPU-Util 误导"></a>GPU-Util 误导</h1><p>nvidia-smi命令行工具基于 NVIDIA 管理库 (NVML)；nvidia-smi输出的结果中的确有<code>GPU-Util</code>，但是这里的定义是什么呢？</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// https://github.com/NVIDIA/go-nvml/blob/v0.12.0-1/gen/nvml/nvml.h#L210</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Utilization information for a device.</span></span><br><span class="line"><span class="comment"> * Each sample period may be between 1 second and 1/6 second, depending on the product being queried.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> <span class="title class_">nvmlUtilization_st</span> &#123;</span><br><span class="line">    <span class="type">unsigned</span> <span class="type">int</span> gpu;                <span class="comment">//!&lt; Percent of time over the past sample period during which one or more kernels was executing on the GPU</span></span><br><span class="line">    <span class="type">unsigned</span> <span class="type">int</span> memory;             <span class="comment">//!&lt; Percent of time over the past sample period during which global (device) memory was being read or written</span></span><br><span class="line">&#125; nvmlUtilization_t;</span><br></pre></td></tr></table></figure>
-<p>根据NVML的定义，“利用率”是指 在过去的样本期间内发生某些活动的时间百分比。具体来说：</p>
+<p>根据NVML的定义，<strong>“GPU利用率”是指 在过去的样本期间内发生某些活动的时间百分比</strong>。这里竟然是<strong>时间片</strong>！<br>具体来说：</p>
 <ul>
 <li>GPU 利用率：这表示一个或多个内核在 GPU 上执行的时间百分比。</li>
 <li>内存利用率：这表示读取或写入全局（设备）内存的时间百分比。</li>
 </ul>
-<p>含义：NVML定义的“利用”概念可以不符合我们的共同理解。它仅测量给定采样周期内设备使用的时间部分，而不考虑该时间内使用的流式多处理器 (SM) 的数量。通常，我们将“利用率”视为正在使用的 GPU 处理器的部分。</p>
+<p>含义：<strong>NVML定义的“利用”概念可以不符合我们的共同理解。它仅测量给定采样周期内设备使用的时间部分，而不考虑该时间内使用的流式多处理器 (SM) 的数量。</strong> 通常，我们将“利用率”视为正在使用的 GPU 处理器的部分。</p>
 <p>所以，这个数据并不能代表 GPU 是不是用满了，更好的指标应该是 SM 利用率，可能更合适。或者进一步说，每个 GPU 用在推理、训练的场景都不一样，我们应该使用业务的 SLO 指标来驱动 GPU 资源的使用情况建设，如果能够进行压测评估GPU 的情况，那将是最准确的。</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://lm2ei.xyz/2025/06/11/AI-NVIDIA-GPU-Util-0/" data-id="cmbrzh4th0000193d26nubqav" data-title="NVIDIA GPU “利用率”误解" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      <a data-url="http://lm2ei.xyz/2025/06/11/AI-NVIDIA-GPU-Util-0/" data-id="cmbrziqlt0000603d8l121bgj" data-title="NVIDIA GPU “利用率”误解" class="article-share-link"><span class="fa fa-share">分享</span></a>
       
       
       
