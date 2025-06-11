@@ -91,7 +91,7 @@
         
   
     <h1 itemprop="name">
-      <a class="p-name article-title" href="/2025/06/11/AI-NVIDIA-GPU-Util-0/">AI-NVIDIA-GPU-Util</a>
+      <a class="p-name article-title" href="/2025/06/11/AI-NVIDIA-GPU-Util-0/">NVIDIA GPU “利用率”误解</a>
     </h1>
   
 
@@ -111,7 +111,7 @@
 </ul>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$nvidia</span>-smi</span><br><span class="line">|-------------------------------+----------------------+----------------------+</span><br><span class="line">| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |</span><br><span class="line">| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |</span><br><span class="line">|                               |                      |               MIG M. |</span><br><span class="line">|===============================+======================+======================|</span><br><span class="line">|   0  Tesla V100-SXM2...  Off  | 00000000:1A:00.0 Off |                    0 |</span><br><span class="line">| N/A   42C    P0    67W / 300W |   2602MiB / 32510MiB |    100%      Default |</span><br><span class="line">|                               |                      |                  N/A |</span><br><span class="line">+-------------------------------+----------------------+----------------------+</span><br></pre></td></tr></table></figure>
 <h1 id="GPU-Util-误导"><a href="#GPU-Util-误导" class="headerlink" title="GPU-Util 误导"></a>GPU-Util 误导</h1><p>nvidia-smi命令行工具基于 NVIDIA 管理库 (NVML)；nvidia-smi输出的结果中的确有<code>GPU-Util</code>，但是这里的定义是什么呢？</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">// https://github.com/NVIDIA/go-nvml/blob/v0.12.0-1/gen/nvml/nvml.h#L210</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Utilization information for a device.</span><br><span class="line"> * Each sample period may be between 1 second and 1/6 second, depending on the product being queried.</span><br><span class="line"> */</span><br><span class="line">typedef struct nvmlUtilization_st &#123;</span><br><span class="line">    unsigned int gpu;                //!&lt; Percent of time over the past sample period during which one or more kernels was executing on the GPU</span><br><span class="line">    unsigned int memory;             //!&lt; Percent of time over the past sample period during which global (device) memory was being read or written</span><br><span class="line">&#125; nvmlUtilization_t;</span><br></pre></td></tr></table></figure>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// https://github.com/NVIDIA/go-nvml/blob/v0.12.0-1/gen/nvml/nvml.h#L210</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Utilization information for a device.</span></span><br><span class="line"><span class="comment"> * Each sample period may be between 1 second and 1/6 second, depending on the product being queried.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> <span class="title class_">nvmlUtilization_st</span> &#123;</span><br><span class="line">    <span class="type">unsigned</span> <span class="type">int</span> gpu;                <span class="comment">//!&lt; Percent of time over the past sample period during which one or more kernels was executing on the GPU</span></span><br><span class="line">    <span class="type">unsigned</span> <span class="type">int</span> memory;             <span class="comment">//!&lt; Percent of time over the past sample period during which global (device) memory was being read or written</span></span><br><span class="line">&#125; nvmlUtilization_t;</span><br></pre></td></tr></table></figure>
 <p>根据NVML的定义，“利用率”是指 在过去的样本期间内发生某些活动的时间百分比。具体来说：</p>
 <ul>
 <li>GPU 利用率：这表示一个或多个内核在 GPU 上执行的时间百分比。</li>
@@ -123,7 +123,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://lm2ei.xyz/2025/06/11/AI-NVIDIA-GPU-Util-0/" data-id="cmbrzeisz0001sk3dgubh2mfc" data-title="AI-NVIDIA-GPU-Util" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      <a data-url="http://lm2ei.xyz/2025/06/11/AI-NVIDIA-GPU-Util-0/" data-id="cmbrzh4th0000193d26nubqav" data-title="NVIDIA GPU “利用率”误解" class="article-share-link"><span class="fa fa-share">分享</span></a>
       
       
       
@@ -183,7 +183,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://lm2ei.xyz/2025/06/11/AI-NVIDIA-GPU-util/" data-id="cmbrzeit00003sk3d60np2zo9" data-title="NVIDIA GPU “利用率”和“饱和度”" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      <a data-url="http://lm2ei.xyz/2025/06/11/AI-NVIDIA-GPU-util/" data-id="cmbrzh4tj0001193d9pkv4oc7" data-title="NVIDIA GPU “利用率”和“饱和度”" class="article-share-link"><span class="fa fa-share">分享</span></a>
       
       
       
@@ -227,7 +227,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://lm2ei.xyz/2025/04/27/AI-Arch-Summit-20250427/" data-id="cmbrzeisx0000sk3d5pok82mg" data-title="AI &amp;&amp; Arch Summit 20250427" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      <a data-url="http://lm2ei.xyz/2025/04/27/AI-Arch-Summit-20250427/" data-id="cmbrzh4tk0003193d11fue144" data-title="AI &amp;&amp; Arch Summit 20250427" class="article-share-link"><span class="fa fa-share">分享</span></a>
       
       
       
@@ -305,7 +305,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://lm2ei.xyz/2025/04/25/%E6%88%91%E7%9A%84-macos-%E9%83%BD%E5%AE%89%E8%A3%85%E4%BA%86%E4%BB%80%E4%B9%88/" data-id="cmbrzeit00004sk3ddt330q9y" data-title="AwesomeMacOSApp:我的 macOS 都安装了什么" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      <a data-url="http://lm2ei.xyz/2025/04/25/%E6%88%91%E7%9A%84-macos-%E9%83%BD%E5%AE%89%E8%A3%85%E4%BA%86%E4%BB%80%E4%B9%88/" data-id="cmbrzh4tl0004193d4nl4f904" data-title="AwesomeMacOSApp:我的 macOS 都安装了什么" class="article-share-link"><span class="fa fa-share">分享</span></a>
       
       
       
@@ -364,7 +364,7 @@
       <ul>
         
           <li>
-            <a href="/2025/06/11/AI-NVIDIA-GPU-Util-0/">AI-NVIDIA-GPU-Util</a>
+            <a href="/2025/06/11/AI-NVIDIA-GPU-Util-0/">NVIDIA GPU “利用率”误解</a>
           </li>
         
           <li>
