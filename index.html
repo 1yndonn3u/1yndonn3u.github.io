@@ -114,7 +114,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://lm2ei.xyz/2025/06/19/Google-Gemini-More-Powerful/" data-id="cmc2p3n4o0001mk3d7ksj0omg" data-title="Google-Gemini-More-Powerful" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      <a data-url="http://lm2ei.xyz/2025/06/19/Google-Gemini-More-Powerful/" data-id="cmc2paohy00006d3d3dm2dwyg" data-title="Google-Gemini-More-Powerful" class="article-share-link"><span class="fa fa-share">分享</span></a>
       
       
       
@@ -174,115 +174,11 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://lm2ei.xyz/2025/06/11/AI-NVIDIA-GPU-Util-0/" data-id="cmc2p3n4n0000mk3d9cf6944y" data-title="NVIDIA GPU “利用率”误解" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      <a data-url="http://lm2ei.xyz/2025/06/11/AI-NVIDIA-GPU-Util-0/" data-id="cmc2paoi000016d3dhis78ong" data-title="NVIDIA GPU “利用率”误解" class="article-share-link"><span class="fa fa-share">分享</span></a>
       
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AI/" rel="tag">AI</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/GPU/" rel="tag">GPU</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/NVIDIA/" rel="tag">NVIDIA</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-AI-NVIDIA-GPU-util" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2025/06/11/AI-NVIDIA-GPU-util/" class="article-date">
-  <time class="dt-published" datetime="2025-06-11T13:02:00.000Z" itemprop="datePublished">2025-06-11</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2025/06/11/AI-NVIDIA-GPU-util/">NVIDIA GPU “利用率”和“饱和度”</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>最近的工作总是和 GPU 绕不开，有一个资源效能方向的工作要提升 GPU 的“利用率”，本周是期望 GPU 能够不仅仅用起来，而且有效的用起来、用满。</p>
-<p>我们的监控系统中有一个 GPU 利用率的指标，调研之后发现，这个有点“玄幻”，这个不是 GPU 利用率，或者说，现在没有一个合适的指标能表征 GPU 利用率。</p>
-<h1 id="英伟达官方-GPU-利用率定义"><a href="#英伟达官方-GPU-利用率定义" class="headerlink" title="英伟达官方 GPU 利用率定义"></a>英伟达官方 GPU 利用率定义</h1><p><img src="/../picture/2weima.com.png" alt="GPUUtilrate"></p>
-<p>依据这个公示，如果一个 GPU，有 10 个 SM，并且只有一个 SM 在工作那么利用率是 &#x3D; 1&#x2F;10*100% &#x3D; 10%。<br>然而通过<code>nvidia-smi</code>工具可以看到，获取的 GPU 利用率是 100%，非常奇怪，和上面的逻辑对不上。</p>
-<h1 id="nvidia-smi-中的-GPU-利用率"><a href="#nvidia-smi-中的-GPU-利用率" class="headerlink" title="nvidia-smi 中的 GPU 利用率"></a>nvidia-smi 中的 GPU 利用率</h1><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function">__global__ <span class="type">void</span> <span class="title">simple_kernel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">while</span> (<span class="literal">true</span>) &#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    simple_kernel&lt;&lt;&lt;<span class="number">1</span>, <span class="number">1</span>&gt;&gt;&gt;();</span><br><span class="line">    <span class="built_in">cudaDeviceSynchronize</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>此代码片段将在单个流多处理器 (SM) 上启动指定的内核（线程）。根据常规理解，GPU的“利用率”应该计算为1 / num_sm * 100%。例如：</p>
-<ul>
-<li>如果 GPU 上有 10 个 SM，则“GPU 利用率”应为 10%。</li>
-<li>如果 GPU 上有 20 个 SM，则“GPU 利用率”应为 5%。<br>然而，据观察，nvidia-smi 可能会报告”GPU-Util” 100%，如以下示例输出所示：</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$nvidia</span>-smi</span><br><span class="line">|-------------------------------+----------------------+----------------------+</span><br><span class="line">| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |</span><br><span class="line">| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |</span><br><span class="line">|                               |                      |               MIG M. |</span><br><span class="line">|===============================+======================+======================|</span><br><span class="line">|   0  Tesla V100-SXM2...  Off  | 00000000:1A:00.0 Off |                    0 |</span><br><span class="line">| N/A   42C    P0    67W / 300W |   2602MiB / 32510MiB |    100%      Default |</span><br><span class="line">|                               |                      |                  N/A |</span><br><span class="line">+-------------------------------+----------------------+----------------------+</span><br></pre></td></tr></table></figure>
-<h1 id="GPU-Util-误导"><a href="#GPU-Util-误导" class="headerlink" title="GPU-Util 误导"></a>GPU-Util 误导</h1><p>nvidia-smi命令行工具基于 NVIDIA 管理库 (NVML)；nvidia-smi输出的结果中的确有<code>GPU-Util</code>，但是这里的定义是什么呢？</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">// https://github.com/NVIDIA/go-nvml/blob/v0.12.0-1/gen/nvml/nvml.h#L210</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Utilization information for a device.</span><br><span class="line"> * Each sample period may be between 1 second and 1/6 second, depending on the product being queried.</span><br><span class="line"> */</span><br><span class="line">typedef struct nvmlUtilization_st &#123;</span><br><span class="line">    unsigned int gpu;                //!&lt; Percent of time over the past sample period during which one or more kernels was executing on the GPU</span><br><span class="line">    unsigned int memory;             //!&lt; Percent of time over the past sample period during which global (device) memory was being read or written</span><br><span class="line">&#125; nvmlUtilization_t;</span><br></pre></td></tr></table></figure>
-<p>根据NVML的定义，“利用率”是指 在过去的样本期间内发生某些活动的时间百分比。具体来说：</p>
-<ul>
-<li>GPU 利用率：这表示一个或多个内核在 GPU 上执行的时间百分比。</li>
-<li>内存利用率：这表示读取或写入全局（设备）内存的时间百分比。</li>
-</ul>
-<p>含义：NVML定义的“利用”概念可以不符合我们的共同理解。它仅测量给定采样周期内设备使用的时间部分，而不考虑该时间内使用的流式多处理器 (SM) 的数量。通常，我们将“利用率”视为正在使用的 GPU 处理器的部分。</p>
-<p>所以，这个数据并不能代表 GPU 是不是用满了，更好的指标应该是 SM 利用率，可能更合适。或者进一步说，每个 GPU 用在推理、训练的场景都不一样，我们应该使用业务的 SLO 指标来驱动 GPU 资源的使用情况建设，如果能够进行压测评估GPU 的情况，那将是最准确的。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://lm2ei.xyz/2025/06/11/AI-NVIDIA-GPU-util/" data-id="cmc2p3n4p0003mk3d188x7fke" data-title="NVIDIA GPU “利用率”和“饱和度”" class="article-share-link"><span class="fa fa-share">分享</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AI/" rel="tag">AI</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/GPU/" rel="tag">GPU</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/NVIDIA/" rel="tag">NVIDIA</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-AI-Arch-Summit-20250427" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2025/04/27/AI-Arch-Summit-20250427/" class="article-date">
-  <time class="dt-published" datetime="2025-04-27T10:53:19.000Z" itemprop="datePublished">2025-04-27</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2025/04/27/AI-Arch-Summit-20250427/">AI &amp;&amp; Arch Summit 20250427</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/ULxokHOn4zVOgiLHf9DQUA">最近爆火的MCP(Model Context Protocol)，读这一篇就够了</a><br>MCP（模型上下文协议）是 Anthropic 提出的标准化协议，旨在统一 AI 模型与外部工具、数据源的交互方式，如同 AI 的“USB-C”。它解决了传统函数调用存在的平台依赖问题，实现工具调用的统一性。MCP 简化了 AI 应用开发集成，其优势包括统一标准、生态系统、模型灵活性和数据安全。用户可接入现有服务器使用功能，开发者主要创建服务器定义工具。AI 模型基于工具描述（通过 Prompt）智能选择并调用工具，完成复杂任务。</p>
-<p><a target="_blank" rel="noopener" href="https://deepwiki.org/">deepwiki</a><br>“一个涵盖所有 GitHub 代码库的免费百科全书”。DeepWiki 是一款由 Devin 推出的智能工具，它的主要作用是帮助开发者快速理解各种开源代码库。你可以通过 DeepWiki 一键为你的 GitHub 仓库生成类似文档的 wiki 页面，而且你可以向 Devin 询问关于该仓库的问题。<br>它利用 AI 技术分析代码库，帮你快速掌握代码的核心内容，包括整体架构、主要功能模块和实现方式。简单来说，DeepWiki 就像是一位了解各种代码库的专家助手，随时准备帮你解读那些复杂的代码。</p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/yBfs6C3bbkgxwJ2Lbap97g">综述：DeepSeek Infra&#x2F;V1&#x2F;MoE&#x2F;V2&#x2F;V3&#x2F;R1 &amp; 开源关键技术</a><br>DeepSeek 的基础架构以及开源的相关核心技术概要、综述。</p>
-<p><a target="_blank" rel="noopener" href="https://www.ufried.com/blog/coupling_1/">(Un)coupling in distributed systems - Part 1</a><br><a target="_blank" rel="noopener" href="https://www.ufried.com/blog/coupling_2/">(Un)coupling in distributed systems - Part 2</a><br>深入探讨系统的解耦设计，不仅仅是架构解耦，更多的是功能解耦、时间解耦等，方便深入理解系统解耦的设计工作，对架构提升、稳定性设计等方向分析非常深入！</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://lm2ei.xyz/2025/04/27/AI-Arch-Summit-20250427/" data-id="cmc2p3n4q0004mk3dhuay6w2y" data-title="AI &amp;&amp; Arch Summit 20250427" class="article-share-link"><span class="fa fa-share">分享</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AI/" rel="tag">AI</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/LLM/" rel="tag">LLM</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MCP/" rel="tag">MCP</a></li></ul>
 
     </footer>
   </div>
@@ -356,7 +252,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://lm2ei.xyz/2025/04/25/%E6%88%91%E7%9A%84-macos-%E9%83%BD%E5%AE%89%E8%A3%85%E4%BA%86%E4%BB%80%E4%B9%88/" data-id="cmc2p3n4q0005mk3d3yd67wad" data-title="AwesomeMacOSApp:我的 macOS 都安装了什么" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      <a data-url="http://lm2ei.xyz/2025/04/25/%E6%88%91%E7%9A%84-macos-%E9%83%BD%E5%AE%89%E8%A3%85%E4%BA%86%E4%BB%80%E4%B9%88/" data-id="cmc2paoi100036d3d6ovc1gcq" data-title="AwesomeMacOSApp:我的 macOS 都安装了什么" class="article-share-link"><span class="fa fa-share">分享</span></a>
       
       
       
@@ -383,7 +279,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">标签</h3>
     <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI/" rel="tag">AI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/App/" rel="tag">App</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GPU/" rel="tag">GPU</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Gemini/" rel="tag">Gemini</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Google/" rel="tag">Google</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LLM/" rel="tag">LLM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MCP/" rel="tag">MCP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/NVIDIA/" rel="tag">NVIDIA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Prompt/" rel="tag">Prompt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/awesome/" rel="tag">awesome</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/macOS/" rel="tag">macOS</a></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI/" rel="tag">AI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/App/" rel="tag">App</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GPU/" rel="tag">GPU</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Gemini/" rel="tag">Gemini</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Google/" rel="tag">Google</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/NVIDIA/" rel="tag">NVIDIA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Prompt/" rel="tag">Prompt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/awesome/" rel="tag">awesome</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/macOS/" rel="tag">macOS</a></li></ul>
     </div>
   </div>
 
@@ -393,7 +289,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">标签云</h3>
     <div class="widget tagcloud">
-      <a href="/tags/AI/" style="font-size: 20px;">AI</a> <a href="/tags/App/" style="font-size: 10px;">App</a> <a href="/tags/GPU/" style="font-size: 15px;">GPU</a> <a href="/tags/Gemini/" style="font-size: 10px;">Gemini</a> <a href="/tags/Google/" style="font-size: 10px;">Google</a> <a href="/tags/LLM/" style="font-size: 10px;">LLM</a> <a href="/tags/MCP/" style="font-size: 10px;">MCP</a> <a href="/tags/NVIDIA/" style="font-size: 15px;">NVIDIA</a> <a href="/tags/Prompt/" style="font-size: 10px;">Prompt</a> <a href="/tags/awesome/" style="font-size: 10px;">awesome</a> <a href="/tags/macOS/" style="font-size: 10px;">macOS</a>
+      <a href="/tags/AI/" style="font-size: 20px;">AI</a> <a href="/tags/App/" style="font-size: 10px;">App</a> <a href="/tags/GPU/" style="font-size: 10px;">GPU</a> <a href="/tags/Gemini/" style="font-size: 10px;">Gemini</a> <a href="/tags/Google/" style="font-size: 10px;">Google</a> <a href="/tags/NVIDIA/" style="font-size: 10px;">NVIDIA</a> <a href="/tags/Prompt/" style="font-size: 10px;">Prompt</a> <a href="/tags/awesome/" style="font-size: 10px;">awesome</a> <a href="/tags/macOS/" style="font-size: 10px;">macOS</a>
     </div>
   </div>
 
@@ -420,14 +316,6 @@
         
           <li>
             <a href="/2025/06/11/AI-NVIDIA-GPU-Util-0/">NVIDIA GPU “利用率”误解</a>
-          </li>
-        
-          <li>
-            <a href="/2025/06/11/AI-NVIDIA-GPU-util/">NVIDIA GPU “利用率”和“饱和度”</a>
-          </li>
-        
-          <li>
-            <a href="/2025/04/27/AI-Arch-Summit-20250427/">AI &amp;&amp; Arch Summit 20250427</a>
           </li>
         
           <li>
