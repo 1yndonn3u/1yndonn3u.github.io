@@ -1,44 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>记录一次自己的确犯错又非常憋屈的交通事故</title>
-    <url>/2025/07/04/%E8%AE%B0%E5%BD%95%E4%B8%80%E6%AC%A1%E8%87%AA%E5%B7%B1%E7%9A%84%E7%A1%AE%E7%8A%AF%E9%94%99%E5%8F%88%E9%9D%9E%E5%B8%B8%E6%86%8B%E5%B1%88%E7%9A%84%E4%BA%A4%E9%80%9A%E4%BA%8B%E6%95%85/</url>
-    <content><![CDATA[<p>首先，我个人认为我自己是一个「非常正经」的司机，「非常」正经的人。我非常正经地遵守交通规则，但不幸的是，我还是犯了一个错误。接下来分享一个今天的交通事故案例：</p>
-<p>先上一张我家小区路口的当时的情况照片<br><img src="/../picture/jiaotong.png" alt="小区出口情况"></p>
-<h1 id="时间线"><a href="#时间线" class="headerlink" title="时间线"></a>时间线</h1><p>日期：2025.07.04<br>以下为时间线：</p>
+    <title>NVIDIA GPU “利用率”误解</title>
+    <url>/2025/06/11/AI-NVIDIA-GPU-Util-0/</url>
+    <content><![CDATA[<p>最近的工作总是和 GPU 绕不开，有一个资源效能方向的工作要提升 GPU 的“利用率”，本周是期望 GPU 能够不仅仅用起来，而且有效的用起来、用满。</p>
+<p>我们的监控系统中有一个 GPU 利用率的指标，调研之后发现，这个有点“玄幻”，这个不是 GPU 利用率，或者说，现在没有一个合适的指标能表征 GPU 利用率。</p>
+<h1 id="英伟达官方-GPU-利用率定义"><a href="#英伟达官方-GPU-利用率定义" class="headerlink" title="英伟达官方 GPU 利用率定义"></a>英伟达官方 GPU 利用率定义</h1><p><img src="/../picture/2weima.com.png" alt="GPUUtilrate"></p>
+<p>依据这个公示，如果一个 GPU，有 10 个 SM，并且只有一个 SM 在工作那么利用率是 &#x3D; 1&#x2F;10*100% &#x3D; 10%。<br>然而通过<code>nvidia-smi</code>工具可以看到，获取的 GPU 利用率是 100%，非常奇怪，和上面的逻辑对不上。</p>
+<h1 id="nvidia-smi-中的-GPU-利用率"><a href="#nvidia-smi-中的-GPU-利用率" class="headerlink" title="nvidia-smi 中的 GPU 利用率"></a>nvidia-smi 中的 GPU 利用率</h1><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function">__global__ <span class="type">void</span> <span class="title">simple_kernel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">while</span> (<span class="literal">true</span>) &#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    simple_kernel&lt;&lt;&lt;<span class="number">1</span>, <span class="number">1</span>&gt;&gt;&gt;();</span><br><span class="line">    <span class="built_in">cudaDeviceSynchronize</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>此代码片段将在单个流多处理器 (SM) 上启动指定的内核（线程）。根据常规理解，GPU的“利用率”应该计算为1 / num_sm * 100%。例如：</p>
 <ul>
-<li>8:08 我出小区之后，开始右转排队。①我观察到蓝色车掉头，红车不退让，蓝色掉头不动；蓝色和红色交流，希望后退一下让他掉头，红色稍后退了一下，蓝色完成了掉头；②我看蓝色掉头之后，有了可以右转弯的空间，我「插队」进入到主路，但还没转弯完成</li>
-<li>8:09 ③红色车向前缓慢形势，因为小区门口非常堵车，大家行进速度大约在 2~5 迈。我继续缓慢右转，红色车一个加速，我们两个车碰撞上了，剐蹭并不严重，稍后上图，注意，这里是<strong>第一次</strong>碰撞。接下来④他又加速了一次，又碰撞了一次。为什么我知道他又加速了呢？因为我正好开着车窗，听到了他哄油门的声音，他是丰田雷凌。我发现他进行二次有意碰撞。⑤我在车内和他说，碰上了。他摇下车窗，冲我喊，「我知道碰上了，怎么样！你报警！」态度很嚣张。</li>
-<li>8:10 我打开双闪，打报警 122 电话，说明情况。对方下车「一气呵成」，拍照完成立马把车挪走了，<strong>非常娴熟</strong>。而此时我电话还没打完呢。</li>
-<li>8:11 完成和 122 电话报警，说明了碰撞情况，我不满意对方二次「有意」撞我，请求交警帮助。122 接线员让我把行车记录仪视频下载下来。</li>
-<li>9:10 辅警过来说我是右转，对方是直行，尽管是拥堵路口排队，也必须保持<strong>安全</strong>的情况下进入。我同意这个观点，我接受处罚。我问交警（此时我一直以为是交警，后来他自己说他没有执法权，是辅警）第二次的「有意」碰撞怎么办。辅警看了我的录制视频，说，这个情况无法认定，除非你报警 110。我同意，辅警帮我联系了民警警察。</li>
-<li>大约10:00 民警来了，看了情况，说民警不管这个事情。只有「我停车在路边，对方撞向我的车」或者「我站在路边，对方撞向我的人，民警才管」，其他情况交警进行定责，行车记录仪视频都没看。并且说：80%的情况，被撞的车辆，都说对方有意撞的，但是无法界定，找交警。辅警和我说，他也没办法界定，视频里面车辆的确有第二次行进的情况，但不能明显看出对方是「有意」的。我要求看对方行车记录仪视频，辅警说，网约车司机说他行车记录仪坏了，无法提供。 <strong>网约车行车记录仪坏了</strong>？<strong>看到问题了吧</strong>。他没办法提供行车记录仪视频，我的行车记录仪视频又是左侧盲区录制的不全，辅警说无法界定，民警也来了，你看走快速处理，你全责是，行不行？</li>
-<li>10:10 我说可以，那就这样吧。我不纠结了，我接受处罚。此时网约车司机：不行！不能走线上处罚，必须走线下，必须测酒驾，怀疑我酒驾。辅警：这样吧，走线上你俩快速处理一下，行不行？对方已经全责了。网约车：不行，必须测酒驾。辅警：那就等等吧，交警过来需要一段时间，过来给你们测酒驾。</li>
-<li>10:30 辅警说交警在处理一个复杂交通事故，无法过来，你俩去交警队吧，这样快一些。我俩都同意，开车前往交警队。</li>
-<li>10:40 到达交警队</li>
-<li>11:10 交警队交警回来，看了现场照片和我行车记录仪视频，认定我全责。我说 OK，可以；辅警对我们做了酒驾测试，均未饮酒。网约车司机：不行，我现在受伤了，我肚子和头都撞到了方向盘，我要求医院检查。 <strong>2~5 迈撞车</strong>，<strong>碰到了肚子和头</strong>？ 。我提出了质疑，交警说这个按照口述写对方已经受伤，是否真的受伤按照实际医院检查为准。我说 OK。</li>
-<li>11:15 网约车司机要求加我微信，我拒绝；给了他手机号，交警开了处罚单，说明我全责。同时对我进行了口头批评：虽然道路非常拥堵，你只能这么开车，但是一定要安全驾驶，务必保证安全再转弯。这次只进行口头批评，后续注意。</li>
-<li>11:15~11:30 我电话了平安保险公司，说明了整个情况，提供了车辆照片，碰撞照片，处罚单等等。其他的安排保险公司去处理了，保险公司和我说：对方检查如果 1.8 万以内都用交强险，不会影响明年保费，已经遇到这样的人，只能随机应变了，没办法，什么人都有。同时问我是否需要修理车，因为车实在是受伤比较小，我选择不修理。</li>
-<li>15:42 平安公司打电话，对方在医院检车花费 700，开了 3 天假条，一共保险公司赔偿他 1500 块钱。保险公司问我，是否有异议，没有异议，保险公司就使用交强险进行报销，需要我短信签字。我说有什么办法治理一下这样的风气和人不，保险公司说：没有办法，这种见太多了，就是讹钱，非常多，这样的情况只能支付，保险公司也没办法。</li>
+<li>如果 GPU 上有 10 个 SM，则“GPU 利用率”应为 10%。</li>
+<li>如果 GPU 上有 20 个 SM，则“GPU 利用率”应为 5%。<br>然而，据观察，nvidia-smi 可能会报告”GPU-Util” 100%，如以下示例输出所示：</li>
 </ul>
-<p>车辆受损照片如下：<br><img src="/../picture/car.png" alt="车辆受损"></p>
-<h1 id="一些感想"><a href="#一些感想" class="headerlink" title="一些感想"></a>一些感想</h1><ol>
-<li>不要插队！但是不可避免的时候，插队「昂贵」车辆的队，比如 20 万以上的。虽然一定程度上有「歧视」行为，但是相对来说这些昂贵车主素质更高，大家可能是打工牛马，为了上班时间会互相礼让。</li>
-<li>遇到胡搅蛮缠的，一定报警，不要私了。他们想通过各种方法「坑你」。比如你是不是喝酒了、装作肚子疼、脑袋疼等，可能是为了坑你的「钱」。</li>
-<li>不要尝试说明对方「有意」撞了你的车，没有办法说明，自己这种情况只能认亏，所以千万不要撞车，才是王道。</li>
-<li>我一直觉得我是老司机，开车 7 年了，没有和其他人发生过交通事故，上一次还是 7 年前被人追尾了，但是不要大意，你永远不知道会遇到什么人。</li>
-<li>人和人是有区别的，我在这个事情里面的确有处理不当的地方，保持冷静，不要冲动。</li>
-<li>对方「娴熟」的记录自己交通事故，已经说明他是一个「老司机」了，这样人，一定要远离。</li>
-<li>自己吸取教训，不要撞车，才是王道。自己吸取教训，不要撞车，才是王道。自己吸取教训，不要撞车，才是王道。</li>
-<li>车辆一定要有行车记录仪，而且要有效、高清，这个可能是你唯一证明自己的机会，一定有、务必有。</li>
-<li>一定买高额的保险，这个是保护自己的最后一道生命线；不要喝酒，不要喝酒，不要喝酒，安全驾驶！</li>
-<li>做一个好人！</li>
-</ol>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="variable">$nvidia</span>-smi</span><br><span class="line">|-------------------------------+----------------------+----------------------+</span><br><span class="line">| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |</span><br><span class="line">| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |</span><br><span class="line">|                               |                      |               MIG M. |</span><br><span class="line">|===============================+======================+======================|</span><br><span class="line">|   0  Tesla V100-SXM2...  Off  | 00000000:1A:00.0 Off |                    0 |</span><br><span class="line">| N/A   42C    P0    67W / 300W |   2602MiB / 32510MiB |    100%      Default |</span><br><span class="line">|                               |                      |                  N/A |</span><br><span class="line">+-------------------------------+----------------------+----------------------+</span><br></pre></td></tr></table></figure>
+<h1 id="GPU-Util-误导"><a href="#GPU-Util-误导" class="headerlink" title="GPU-Util 误导"></a>GPU-Util 误导</h1><p>nvidia-smi命令行工具基于 NVIDIA 管理库 (NVML)；nvidia-smi输出的结果中的确有<code>GPU-Util</code>，但是这里的定义是什么呢？</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// https://github.com/NVIDIA/go-nvml/blob/v0.12.0-1/gen/nvml/nvml.h#L210</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Utilization information for a device.</span></span><br><span class="line"><span class="comment"> * Each sample period may be between 1 second and 1/6 second, depending on the product being queried.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> <span class="title class_">nvmlUtilization_st</span> &#123;</span><br><span class="line">    <span class="type">unsigned</span> <span class="type">int</span> gpu;                <span class="comment">//!&lt; Percent of time over the past sample period during which one or more kernels was executing on the GPU</span></span><br><span class="line">    <span class="type">unsigned</span> <span class="type">int</span> memory;             <span class="comment">//!&lt; Percent of time over the past sample period during which global (device) memory was being read or written</span></span><br><span class="line">&#125; nvmlUtilization_t;</span><br></pre></td></tr></table></figure>
+<p>根据NVML的定义，<strong>“GPU利用率”是指 在过去的样本期间内发生某些活动的时间百分比</strong>。这里竟然是<strong>时间片</strong>！<br>具体来说：</p>
+<ul>
+<li>GPU 利用率：这表示一个或多个内核在 GPU 上执行的时间百分比。</li>
+<li>内存利用率：这表示读取或写入全局（设备）内存的时间百分比。</li>
+</ul>
+<p>含义：<strong>NVML定义的“利用”概念可以不符合我们的共同理解。它仅测量给定采样周期内设备使用的时间部分，而不考虑该时间内使用的流式多处理器 (SM) 的数量。</strong> 通常，我们将“利用率”视为正在使用的 GPU 处理器的部分。</p>
+<p>所以，这个数据并不能代表 GPU 是不是用满了，更好的指标应该是 SM 利用率，可能更合适。或者进一步说，每个 GPU 用在推理、训练的场景都不一样，我们应该使用业务的 SLO 指标来驱动 GPU 资源的使用情况建设，如果能够进行压测评估GPU 的情况，那将是最准确的。</p>
 ]]></content>
       <tags>
-        <tag>交通事故</tag>
-        <tag>网约车</tag>
-        <tag>安全驾驶</tag>
+        <tag>AI</tag>
+        <tag>NVIDIA</tag>
+        <tag>GPU</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Google-Gemini-More-Powerful</title>
+    <url>/2025/06/19/Google-Gemini-More-Powerful/</url>
+    <content><![CDATA[<p>为了将 Gemini 更加能有非常强大的满足大家的使用需求，大家更关注他输出的格式、输出的内容真实性以及个性化，所以我在 Gemini 的 save_info中添加了如下描述，发现此后 Gemini 的回复效果非常惊人。<br>添加内容如下（可以分开四段添加）：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">The language I am used to is Chinese, also know some English. I work in the $&#123;internet industry in software development&#125; and my position is $&#123;position&#125;. I want to understand 99% of what I want to ask for knowledge by using Gemini to help me with 80% of the core content of my answers. I am more interested in gaining in-depth, rational knowledge here.</span><br></pre></td></tr></table></figure>
+
+<p>注：work info 和 position 需要自己修改成自己的实际情况，例如 SWE、UE 等等。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">You need to comprehensively analyze the questions raised by me, and while strictly following instructions, you need to be able to think divergently and more comprehensively about my intentions and give more comprehensive answers.</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">1. Efficient Information Delivery: Provide the most valuable and pertinent knowledge swiftly.</span><br><span class="line">2. Depth and Comprehensibility: Balance informative richness with understandability—avoid superficial treatment or excessive complexity.</span><br><span class="line">3. Neutrality and Reliability: Maintain objectivity, respect sources, avoid fabrications, and refrain from introducing bias or hallucinations.</span><br><span class="line">4. Professional and Readable Format: Ensure responses are structured, easy to read, and exhibit professional articulation.</span><br><span class="line">5. Formal and Correct Tone: Prioritize accuracy and reasoning, gradually delve deeper; exemplify principles with illustrations.</span><br><span class="line">6. Coaching Approach: Step-by-step explanations.</span><br><span class="line">7. Truthful Sharing: Direct and honest.</span><br><span class="line">9. Forward-thinking Perspective: Share distinct, clear viewpoints.</span><br><span class="line">10. Corporate Terminology: Utilize formal business language; summarize complex terms.</span><br><span class="line">11. Logical Coherence: Assure cohesive logic, avoiding ambiguity or contradiction.</span><br><span class="line">12. Clear Structure: Employ hierarchical structures (e.g., top-down, step analysis, impact-solutions).</span><br><span class="line">13. Truthfulness and Reliability: Base answers on facts—if disputed, clarify differing opinions.</span><br><span class="line">14. Emphasized Formatting: Utilize larger fonts, enhanced colors for titles; bold or italicize key content.</span><br><span class="line">15. Prioritization: In cases of conflict, prioritize accuracy, neutrality, and time management.</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Do not invent or assume facts. If unconfirmed, say: “I cannot verify this.” or “I do not have access to that information.” Label all unverified content: [Inference] = logical guess, [Speculation] = creative or unclear guess, [Unverified] = no confirmed source. Ask instead of filling blanks. Do not change input. If any part is unverified, label the full response. If you hallucinate or misrepresent, say: Correction: I gave an unverified or speculative answer. It should have been labeled. Do not use the following unless quoting or citing: Prevent, Guarantee, Will never, Fixes, Eliminates, Ensures that. For behavior claims, include: [Unverified] or [Inference] and a note that this is expected behavior, not guaranteed.</span><br></pre></td></tr></table></figure>
+<p>注：此段用来防止幻觉。</p>
+<p>ps：可以额外增加更多你的个人信息，比如 location、name、age 等等，你自己需要的，你会发现 Gemini 变成了一个你个人最强大的助手。</p>
+]]></content>
+      <tags>
+        <tag>AI</tag>
+        <tag>Google</tag>
+        <tag>Gemini</tag>
+        <tag>Prompt</tag>
       </tags>
   </entry>
   <entry>
@@ -90,55 +101,44 @@
       </tags>
   </entry>
   <entry>
-    <title>NVIDIA GPU “利用率”误解</title>
-    <url>/2025/06/11/AI-NVIDIA-GPU-Util-0/</url>
-    <content><![CDATA[<p>最近的工作总是和 GPU 绕不开，有一个资源效能方向的工作要提升 GPU 的“利用率”，本周是期望 GPU 能够不仅仅用起来，而且有效的用起来、用满。</p>
-<p>我们的监控系统中有一个 GPU 利用率的指标，调研之后发现，这个有点“玄幻”，这个不是 GPU 利用率，或者说，现在没有一个合适的指标能表征 GPU 利用率。</p>
-<h1 id="英伟达官方-GPU-利用率定义"><a href="#英伟达官方-GPU-利用率定义" class="headerlink" title="英伟达官方 GPU 利用率定义"></a>英伟达官方 GPU 利用率定义</h1><p><img src="/../picture/2weima.com.png" alt="GPUUtilrate"></p>
-<p>依据这个公示，如果一个 GPU，有 10 个 SM，并且只有一个 SM 在工作那么利用率是 &#x3D; 1&#x2F;10*100% &#x3D; 10%。<br>然而通过<code>nvidia-smi</code>工具可以看到，获取的 GPU 利用率是 100%，非常奇怪，和上面的逻辑对不上。</p>
-<h1 id="nvidia-smi-中的-GPU-利用率"><a href="#nvidia-smi-中的-GPU-利用率" class="headerlink" title="nvidia-smi 中的 GPU 利用率"></a>nvidia-smi 中的 GPU 利用率</h1><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function">__global__ <span class="type">void</span> <span class="title">simple_kernel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">while</span> (<span class="literal">true</span>) &#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    simple_kernel&lt;&lt;&lt;<span class="number">1</span>, <span class="number">1</span>&gt;&gt;&gt;();</span><br><span class="line">    <span class="built_in">cudaDeviceSynchronize</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>此代码片段将在单个流多处理器 (SM) 上启动指定的内核（线程）。根据常规理解，GPU的“利用率”应该计算为1 / num_sm * 100%。例如：</p>
+    <title>记录一次自己的确犯错又非常憋屈的交通事故</title>
+    <url>/2025/07/04/%E8%AE%B0%E5%BD%95%E4%B8%80%E6%AC%A1%E8%87%AA%E5%B7%B1%E7%9A%84%E7%A1%AE%E7%8A%AF%E9%94%99%E5%8F%88%E9%9D%9E%E5%B8%B8%E6%86%8B%E5%B1%88%E7%9A%84%E4%BA%A4%E9%80%9A%E4%BA%8B%E6%95%85/</url>
+    <content><![CDATA[<p>首先，我个人认为我自己是一个「非常正经」的司机，「非常」正经的人。我非常正经地遵守交通规则，但不幸的是，我还是犯了一个错误。接下来分享一个今天的交通事故案例：</p>
+<p>先上一张我家小区路口的当时的情况照片<br><img src="/../picture/jiaotong.png" alt="小区出口情况"></p>
+<h1 id="时间线"><a href="#时间线" class="headerlink" title="时间线"></a>时间线</h1><p>日期：2025.07.04<br>以下为时间线：</p>
 <ul>
-<li>如果 GPU 上有 10 个 SM，则“GPU 利用率”应为 10%。</li>
-<li>如果 GPU 上有 20 个 SM，则“GPU 利用率”应为 5%。<br>然而，据观察，nvidia-smi 可能会报告”GPU-Util” 100%，如以下示例输出所示：</li>
+<li>8:08 我出小区之后，开始右转排队。①我观察到蓝色车掉头，红车不退让，蓝色掉头不动；蓝色和红色交流，希望后退一下让他掉头，红色稍后退了一下，蓝色完成了掉头；②我看蓝色掉头之后，有了可以右转弯的空间，我「插队」进入到主路，但还没转弯完成</li>
+<li>8:09 ③红色车向前缓慢形势，因为小区门口非常堵车，大家行进速度大约在 2~5 迈。我继续缓慢右转，红色车一个加速，我们两个车碰撞上了，剐蹭并不严重，稍后上图，注意，这里是<strong>第一次</strong>碰撞。接下来④他又加速了一次，又碰撞了一次。为什么我知道他又加速了呢？因为我正好开着车窗，听到了他哄油门的声音，他是丰田雷凌。我发现他进行二次有意碰撞。⑤我在车内和他说，碰上了。他摇下车窗，冲我喊，「我知道碰上了，怎么样！你报警！」态度很嚣张。</li>
+<li>8:10 我打开双闪，打报警 122 电话，说明情况。对方下车「一气呵成」，拍照完成立马把车挪走了，<strong>非常娴熟</strong>。而此时我电话还没打完呢。</li>
+<li>8:11 完成和 122 电话报警，说明了碰撞情况，我不满意对方二次「有意」撞我，请求交警帮助。122 接线员让我把行车记录仪视频下载下来。</li>
+<li>9:10 辅警过来说我是右转，对方是直行，尽管是拥堵路口排队，也必须保持<strong>安全</strong>的情况下进入。我同意这个观点，我接受处罚。我问交警（此时我一直以为是交警，后来他自己说他没有执法权，是辅警）第二次的「有意」碰撞怎么办。辅警看了我的录制视频，说，这个情况无法认定，除非你报警 110。我同意，辅警帮我联系了民警警察。</li>
+<li>大约10:00 民警来了，看了情况，说民警不管这个事情。只有「我停车在路边，对方撞向我的车」或者「我站在路边，对方撞向我的人，民警才管」，其他情况交警进行定责，行车记录仪视频都没看。并且说：80%的情况，被撞的车辆，都说对方有意撞的，但是无法界定，找交警。辅警和我说，他也没办法界定，视频里面车辆的确有第二次行进的情况，但不能明显看出对方是「有意」的。我要求看对方行车记录仪视频，辅警说，网约车司机说他行车记录仪坏了，无法提供。 <strong>网约车行车记录仪坏了</strong>？<strong>看到问题了吧</strong>。他没办法提供行车记录仪视频，我的行车记录仪视频又是左侧盲区录制的不全，辅警说无法界定，民警也来了，你看走快速处理，你全责是，行不行？</li>
+<li>10:10 我说可以，那就这样吧。我不纠结了，我接受处罚。此时网约车司机：不行！不能走线上处罚，必须走线下，必须测酒驾，怀疑我酒驾。辅警：这样吧，走线上你俩快速处理一下，行不行？对方已经全责了。网约车：不行，必须测酒驾。辅警：那就等等吧，交警过来需要一段时间，过来给你们测酒驾。</li>
+<li>10:30 辅警说交警在处理一个复杂交通事故，无法过来，你俩去交警队吧，这样快一些。我俩都同意，开车前往交警队。</li>
+<li>10:40 到达交警队</li>
+<li>11:10 交警队交警回来，看了现场照片和我行车记录仪视频，认定我全责。我说 OK，可以；辅警对我们做了酒驾测试，均未饮酒。网约车司机：不行，我现在受伤了，我肚子和头都撞到了方向盘，我要求医院检查。 <strong>2~5 迈撞车</strong>，<strong>碰到了肚子和头</strong>？ 。我提出了质疑，交警说这个按照口述写对方已经受伤，是否真的受伤按照实际医院检查为准。我说 OK。</li>
+<li>11:15 网约车司机要求加我微信，我拒绝；给了他手机号，交警开了处罚单，说明我全责。同时对我进行了口头批评：虽然道路非常拥堵，你只能这么开车，但是一定要安全驾驶，务必保证安全再转弯。这次只进行口头批评，后续注意。</li>
+<li>11:15~11:30 我电话了平安保险公司，说明了整个情况，提供了车辆照片，碰撞照片，处罚单等等。其他的安排保险公司去处理了，保险公司和我说：对方检查如果 1.8 万以内都用交强险，不会影响明年保费，已经遇到这样的人，只能随机应变了，没办法，什么人都有。同时问我是否需要修理车，因为车实在是受伤比较小，我选择不修理。</li>
+<li>15:42 平安公司打电话，对方在医院检车花费 700，开了 3 天假条，一共保险公司赔偿他 1500 块钱。保险公司问我，是否有异议，没有异议，保险公司就使用交强险进行报销，需要我短信签字。我说有什么办法治理一下这样的风气和人不，保险公司说：没有办法，这种见太多了，就是讹钱，非常多，这样的情况只能支付，保险公司也没办法。</li>
 </ul>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="variable">$nvidia</span>-smi</span><br><span class="line">|-------------------------------+----------------------+----------------------+</span><br><span class="line">| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |</span><br><span class="line">| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |</span><br><span class="line">|                               |                      |               MIG M. |</span><br><span class="line">|===============================+======================+======================|</span><br><span class="line">|   0  Tesla V100-SXM2...  Off  | 00000000:1A:00.0 Off |                    0 |</span><br><span class="line">| N/A   42C    P0    67W / 300W |   2602MiB / 32510MiB |    100%      Default |</span><br><span class="line">|                               |                      |                  N/A |</span><br><span class="line">+-------------------------------+----------------------+----------------------+</span><br></pre></td></tr></table></figure>
-<h1 id="GPU-Util-误导"><a href="#GPU-Util-误导" class="headerlink" title="GPU-Util 误导"></a>GPU-Util 误导</h1><p>nvidia-smi命令行工具基于 NVIDIA 管理库 (NVML)；nvidia-smi输出的结果中的确有<code>GPU-Util</code>，但是这里的定义是什么呢？</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// https://github.com/NVIDIA/go-nvml/blob/v0.12.0-1/gen/nvml/nvml.h#L210</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Utilization information for a device.</span></span><br><span class="line"><span class="comment"> * Each sample period may be between 1 second and 1/6 second, depending on the product being queried.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> <span class="title class_">nvmlUtilization_st</span> &#123;</span><br><span class="line">    <span class="type">unsigned</span> <span class="type">int</span> gpu;                <span class="comment">//!&lt; Percent of time over the past sample period during which one or more kernels was executing on the GPU</span></span><br><span class="line">    <span class="type">unsigned</span> <span class="type">int</span> memory;             <span class="comment">//!&lt; Percent of time over the past sample period during which global (device) memory was being read or written</span></span><br><span class="line">&#125; nvmlUtilization_t;</span><br></pre></td></tr></table></figure>
-<p>根据NVML的定义，<strong>“GPU利用率”是指 在过去的样本期间内发生某些活动的时间百分比</strong>。这里竟然是<strong>时间片</strong>！<br>具体来说：</p>
-<ul>
-<li>GPU 利用率：这表示一个或多个内核在 GPU 上执行的时间百分比。</li>
-<li>内存利用率：这表示读取或写入全局（设备）内存的时间百分比。</li>
-</ul>
-<p>含义：<strong>NVML定义的“利用”概念可以不符合我们的共同理解。它仅测量给定采样周期内设备使用的时间部分，而不考虑该时间内使用的流式多处理器 (SM) 的数量。</strong> 通常，我们将“利用率”视为正在使用的 GPU 处理器的部分。</p>
-<p>所以，这个数据并不能代表 GPU 是不是用满了，更好的指标应该是 SM 利用率，可能更合适。或者进一步说，每个 GPU 用在推理、训练的场景都不一样，我们应该使用业务的 SLO 指标来驱动 GPU 资源的使用情况建设，如果能够进行压测评估GPU 的情况，那将是最准确的。</p>
+<p>车辆受损照片如下：<br><img src="/../picture/car.png" alt="车辆受损"></p>
+<h1 id="一些感想"><a href="#一些感想" class="headerlink" title="一些感想"></a>一些感想</h1><ol>
+<li>不要插队！但是不可避免的时候，插队「昂贵」车辆的队，比如 20 万以上的。虽然一定程度上有「歧视」行为，但是相对来说这些昂贵车主素质更高，大家可能是打工牛马，为了上班时间会互相礼让。</li>
+<li>遇到胡搅蛮缠的，一定报警，不要私了。他们想通过各种方法「坑你」。比如你是不是喝酒了、装作肚子疼、脑袋疼等，可能是为了坑你的「钱」。</li>
+<li>不要尝试说明对方「有意」撞了你的车，没有办法说明，自己这种情况只能认亏，所以千万不要撞车，才是王道。</li>
+<li>我一直觉得我是老司机，开车 7 年了，没有和其他人发生过交通事故，上一次还是 7 年前被人追尾了，但是不要大意，你永远不知道会遇到什么人。</li>
+<li>人和人是有区别的，我在这个事情里面的确有处理不当的地方，保持冷静，不要冲动。</li>
+<li>对方「娴熟」的记录自己交通事故，已经说明他是一个「老司机」了，这样人，一定要远离。</li>
+<li>自己吸取教训，不要撞车，才是王道。自己吸取教训，不要撞车，才是王道。自己吸取教训，不要撞车，才是王道。</li>
+<li>车辆一定要有行车记录仪，而且要有效、高清，这个可能是你唯一证明自己的机会，一定有、务必有。</li>
+<li>一定买高额的保险，这个是保护自己的最后一道生命线；不要喝酒，不要喝酒，不要喝酒，安全驾驶！</li>
+<li>做一个好人！</li>
+</ol>
 ]]></content>
       <tags>
-        <tag>AI</tag>
-        <tag>NVIDIA</tag>
-        <tag>GPU</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Google-Gemini-More-Powerful</title>
-    <url>/2025/06/19/Google-Gemini-More-Powerful/</url>
-    <content><![CDATA[<p>为了将 Gemini 更加能有非常强大的满足大家的使用需求，大家更关注他输出的格式、输出的内容真实性以及个性化，所以我在 Gemini 的 save_info中添加了如下描述，发现此后 Gemini 的回复效果非常惊人。<br>添加内容如下（可以分开四段添加）：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">The language I am used to is Chinese, also know some English. I work in the $&#123;internet industry in software development&#125; and my position is $&#123;position&#125;. I want to understand 99% of what I want to ask for knowledge by using Gemini to help me with 80% of the core content of my answers. I am more interested in gaining in-depth, rational knowledge here.</span><br></pre></td></tr></table></figure>
-
-<p>注：work info 和 position 需要自己修改成自己的实际情况，例如 SWE、UE 等等。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">You need to comprehensively analyze the questions raised by me, and while strictly following instructions, you need to be able to think divergently and more comprehensively about my intentions and give more comprehensive answers.</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">1. Efficient Information Delivery: Provide the most valuable and pertinent knowledge swiftly.</span><br><span class="line">2. Depth and Comprehensibility: Balance informative richness with understandability—avoid superficial treatment or excessive complexity.</span><br><span class="line">3. Neutrality and Reliability: Maintain objectivity, respect sources, avoid fabrications, and refrain from introducing bias or hallucinations.</span><br><span class="line">4. Professional and Readable Format: Ensure responses are structured, easy to read, and exhibit professional articulation.</span><br><span class="line">5. Formal and Correct Tone: Prioritize accuracy and reasoning, gradually delve deeper; exemplify principles with illustrations.</span><br><span class="line">6. Coaching Approach: Step-by-step explanations.</span><br><span class="line">7. Truthful Sharing: Direct and honest.</span><br><span class="line">9. Forward-thinking Perspective: Share distinct, clear viewpoints.</span><br><span class="line">10. Corporate Terminology: Utilize formal business language; summarize complex terms.</span><br><span class="line">11. Logical Coherence: Assure cohesive logic, avoiding ambiguity or contradiction.</span><br><span class="line">12. Clear Structure: Employ hierarchical structures (e.g., top-down, step analysis, impact-solutions).</span><br><span class="line">13. Truthfulness and Reliability: Base answers on facts—if disputed, clarify differing opinions.</span><br><span class="line">14. Emphasized Formatting: Utilize larger fonts, enhanced colors for titles; bold or italicize key content.</span><br><span class="line">15. Prioritization: In cases of conflict, prioritize accuracy, neutrality, and time management.</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Do not invent or assume facts. If unconfirmed, say: “I cannot verify this.” or “I do not have access to that information.” Label all unverified content: [Inference] = logical guess, [Speculation] = creative or unclear guess, [Unverified] = no confirmed source. Ask instead of filling blanks. Do not change input. If any part is unverified, label the full response. If you hallucinate or misrepresent, say: Correction: I gave an unverified or speculative answer. It should have been labeled. Do not use the following unless quoting or citing: Prevent, Guarantee, Will never, Fixes, Eliminates, Ensures that. For behavior claims, include: [Unverified] or [Inference] and a note that this is expected behavior, not guaranteed.</span><br></pre></td></tr></table></figure>
-<p>注：此段用来防止幻觉。</p>
-<p>ps：可以额外增加更多你的个人信息，比如 location、name、age 等等，你自己需要的，你会发现 Gemini 变成了一个你个人最强大的助手。</p>
-]]></content>
-      <tags>
-        <tag>AI</tag>
-        <tag>Google</tag>
-        <tag>Gemini</tag>
-        <tag>Prompt</tag>
+        <tag>交通事故</tag>
+        <tag>网约车</tag>
+        <tag>安全驾驶</tag>
       </tags>
   </entry>
 </search>
