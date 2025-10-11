@@ -31,25 +31,20 @@
       </tags>
   </entry>
   <entry>
-    <title>Google-Gemini-More-Powerful</title>
-    <url>/2025/06/19/Google-Gemini-More-Powerful/</url>
-    <content><![CDATA[<p>为了将 Gemini 更加能有非常强大的满足大家的使用需求，大家更关注他输出的格式、输出的内容真实性以及个性化，所以我在 Gemini 的 save_info中添加了如下描述，发现此后 Gemini 的回复效果非常惊人。<br>添加内容如下（可以分开四段添加）：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">The language I am used to is Chinese, also know some English. I work in the $&#123;internet industry in software development&#125; and my position is $&#123;position&#125;. I want to understand 99% of what I want to ask for knowledge by using Gemini to help me with 80% of the core content of my answers. I am more interested in gaining in-depth, rational knowledge here.</span><br></pre></td></tr></table></figure>
-
-<p>注：work info 和 position 需要自己修改成自己的实际情况，例如 SWE、UE 等等。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">You need to comprehensively analyze the questions raised by me, and while strictly following instructions, you need to be able to think divergently and more comprehensively about my intentions and give more comprehensive answers.</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">1. Efficient Information Delivery: Provide the most valuable and pertinent knowledge swiftly.</span><br><span class="line">2. Depth and Comprehensibility: Balance informative richness with understandability—avoid superficial treatment or excessive complexity.</span><br><span class="line">3. Neutrality and Reliability: Maintain objectivity, respect sources, avoid fabrications, and refrain from introducing bias or hallucinations.</span><br><span class="line">4. Professional and Readable Format: Ensure responses are structured, easy to read, and exhibit professional articulation.</span><br><span class="line">5. Formal and Correct Tone: Prioritize accuracy and reasoning, gradually delve deeper; exemplify principles with illustrations.</span><br><span class="line">6. Coaching Approach: Step-by-step explanations.</span><br><span class="line">7. Truthful Sharing: Direct and honest.</span><br><span class="line">9. Forward-thinking Perspective: Share distinct, clear viewpoints.</span><br><span class="line">10. Corporate Terminology: Utilize formal business language; summarize complex terms.</span><br><span class="line">11. Logical Coherence: Assure cohesive logic, avoiding ambiguity or contradiction.</span><br><span class="line">12. Clear Structure: Employ hierarchical structures (e.g., top-down, step analysis, impact-solutions).</span><br><span class="line">13. Truthfulness and Reliability: Base answers on facts—if disputed, clarify differing opinions.</span><br><span class="line">14. Emphasized Formatting: Utilize larger fonts, enhanced colors for titles; bold or italicize key content.</span><br><span class="line">15. Prioritization: In cases of conflict, prioritize accuracy, neutrality, and time management.</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Do not invent or assume facts. If unconfirmed, say: “I cannot verify this.” or “I do not have access to that information.” Label all unverified content: [Inference] = logical guess, [Speculation] = creative or unclear guess, [Unverified] = no confirmed source. Ask instead of filling blanks. Do not change input. If any part is unverified, label the full response. If you hallucinate or misrepresent, say: Correction: I gave an unverified or speculative answer. It should have been labeled. Do not use the following unless quoting or citing: Prevent, Guarantee, Will never, Fixes, Eliminates, Ensures that. For behavior claims, include: [Unverified] or [Inference] and a note that this is expected behavior, not guaranteed.</span><br></pre></td></tr></table></figure>
-<p>注：此段用来防止幻觉。</p>
-<p>ps：可以额外增加更多你的个人信息，比如 location、name、age 等等，你自己需要的，你会发现 Gemini 变成了一个你个人最强大的助手。</p>
+    <title>为什么执行力比思考更加重要</title>
+    <url>/2025/10/11/%E4%B8%BA%E4%BB%80%E4%B9%88%E6%89%A7%E8%A1%8C%E5%8A%9B%E6%AF%94%E6%80%9D%E8%80%83%E6%9B%B4%E5%8A%A0%E9%87%8D%E8%A6%81/</url>
+    <content><![CDATA[<p>首先，我不是批评思考，在很大程度上我是赞同先思考，而再执行的。尤其是，很多事情，可能‘莽撞’的执行，导致我们的资源出现了浪费的情况，务必进行仔细的思考方可继续进行。</p>
+<p>我批评的是，很多事情我们明明知道是正确的，但是不去执行，而是<strong>反复的在研讨&#x2F;证明这个事情的正确性</strong>。这种行为不仅浪费了时间，还可能导致团队成员之间的不信任和矛盾。</p>
+<p>这个现象我相信大家都有遇到，有很多事情，是不需要证明其正确性的，比如公理？比如常识？比如一些不是我们需要研究的方向，而我们是使用方的角色，例如数学的1+1&#x3D;2，物理的万有引力定律，化学的元素周期表等等。<br>但是，我发现工作中，经常会遇到明明我们已经确认要做，也的确在做，却要不断的、重复的去证明这个事情的价值，而且还要被量化。这个就很困难了，毕竟不是所有的事情都能被量化的。而且，量化本身也存在很多问题，比如如何定义量化标准，如何保证量化结果的准确性等等。大家可能对量化的‘公式’不认可，大家可能对量化的参数不认可，可能每个人对结果都不一定认可。很多时候的量化公式、推到过程，是因为我们先有了结果，再去进行推导的。</p>
+<p>这样的事情，在我们的工作中，可能浪费了比较多的事情，导致我们错过了一些工作的先机。所以，我个人很大程度上，是在这样的场景建议我们先干起来，快步、小步的跑起来，不断的去论证，不断的去尝试，不断的去试错，不断的去拿到收益。just try it, just try it, just try it。</p>
+<p>最近遇到了一个灵魂问题，<strong>团队需要几个人？为什么是这么多人，而不是其他的人数？</strong>。这可的确是一个非常难的问题了，我相信每个人都有不同的答案，大家的认知也是不一样的，如果这个事情能够被量化，我想应该可以发布一篇完整的论文了。我现在的阶段来看，这个问题不值得深入的讨论，本质上是重视程度问题，我们如果能讲清楚我们做了什么事情，哪些方向，需要多少人力就可以了。就像是PM在说我们要做哪些功能，如果评审通过，那就干。这些方向研发需要多少个task，需要多少研发就好了。先干起来，让功能快速上线去获客，千万不要这个时候纠结，如果我做了某一个平台，能够提效多少，所以我可以少招聘N个人。兄弟，如果你没做出来呢？如果效果不符合预期呢？那功能能上线么或者上线的功能真的是用户想要的那个效果么，还是打过折扣的。</p>
+<p>我知道，现在的降本增效很必要，但是务必保证效果。想要精细运营是正确的，但是想要量化精细运营的人力消耗，我感觉是不合理的。</p>
+<p>当前我们在开展很多效率提升的工作，如果的关联到提效了多少人，那这个团队的人数量是一直要减少吗？不是的，今年做了这个事情，明年还要做另外的事情，团队不要发展么？公司不要发展么？如果只看到了现在的事情，那么答案是肯定的，可以干掉N个人，如果看到未来，那么就是另一个答案了。也许，大家很担心，我们的公司收入已经降低了，不需要这么多人，但这个事情没有一个直接对应的关心，世界是混沌的、熵增加的，让我们用更多的时间去工作，而不是研究某一个项目节省了多少人力、或者团队需要多少人吧。</p>
+<p>just do it，先干起来，毕竟那么多确定性的事情我们还没有完成，工作现在是堆积的状态，不是活少人多，而是活多人少呀！何必去证明这个常识呢？</p>
 ]]></content>
       <tags>
-        <tag>AI</tag>
-        <tag>Google</tag>
-        <tag>Gemini</tag>
-        <tag>Prompt</tag>
+        <tag>思考</tag>
+        <tag>执行力</tag>
       </tags>
   </entry>
   <entry>
@@ -101,23 +96,6 @@
       </tags>
   </entry>
   <entry>
-    <title>为什么执行力比思考更加重要</title>
-    <url>/2025/10/11/%E4%B8%BA%E4%BB%80%E4%B9%88%E6%89%A7%E8%A1%8C%E5%8A%9B%E6%AF%94%E6%80%9D%E8%80%83%E6%9B%B4%E5%8A%A0%E9%87%8D%E8%A6%81/</url>
-    <content><![CDATA[<p>首先，我不是批评思考，在很大程度上我是赞同先思考，而再执行的。尤其是，很多事情，可能‘莽撞’的执行，导致我们的资源出现了浪费的情况，务必进行仔细的思考方可继续进行。</p>
-<p>我批评的是，很多事情我们明明知道是正确的，但是不去执行，而是<strong>反复的在研讨&#x2F;证明这个事情的正确性</strong>。这种行为不仅浪费了时间，还可能导致团队成员之间的不信任和矛盾。</p>
-<p>这个现象我相信大家都有遇到，有很多事情，是不需要证明其正确性的，比如公理？比如常识？比如一些不是我们需要研究的方向，而我们是使用方的角色，例如数学的1+1&#x3D;2，物理的万有引力定律，化学的元素周期表等等。<br>但是，我发现工作中，经常会遇到明明我们已经确认要做，也的确在做，却要不断的、重复的去证明这个事情的价值，而且还要被量化。这个就很困难了，毕竟不是所有的事情都能被量化的。而且，量化本身也存在很多问题，比如如何定义量化标准，如何保证量化结果的准确性等等。大家可能对量化的‘公式’不认可，大家可能对量化的参数不认可，可能每个人对结果都不一定认可。很多时候的量化公式、推到过程，是因为我们先有了结果，再去进行推导的。</p>
-<p>这样的事情，在我们的工作中，可能浪费了比较多的事情，导致我们错过了一些工作的先机。所以，我个人很大程度上，是在这样的场景建议我们先干起来，快步、小步的跑起来，不断的去论证，不断的去尝试，不断的去试错，不断的去拿到收益。just try it, just try it, just try it。</p>
-<p>最近遇到了一个灵魂问题，<strong>团队需要几个人？为什么是这么多人，而不是其他的人数？</strong>。这可的确是一个非常难的问题了，我相信每个人都有不同的答案，大家的认知也是不一样的，如果这个事情能够被量化，我想应该可以发布一篇完整的论文了。我现在的阶段来看，这个问题不值得深入的讨论，本质上是重视程度问题，我们如果能讲清楚我们做了什么事情，哪些方向，需要多少人力就可以了。就像是PM在说我们要做哪些功能，如果评审通过，那就干。这些方向研发需要多少个task，需要多少研发就好了。先干起来，让功能快速上线去获客，千万不要这个时候纠结，如果我做了某一个平台，能够提效多少，所以我可以少招聘N个人。兄弟，如果你没做出来呢？如果效果不符合预期呢？那功能能上线么或者上线的功能真的是用户想要的那个效果么，还是打过折扣的。</p>
-<p>我知道，现在的降本增效很必要，但是务必保证效果。想要精细运营是正确的，但是想要量化精细运营的人力消耗，我感觉是不合理的。</p>
-<p>当前我们在开展很多效率提升的工作，如果的关联到提效了多少人，那这个团队的人数量是一直要减少吗？不是的，今年做了这个事情，明年还要做另外的事情，团队不要发展么？公司不要发展么？如果只看到了现在的事情，那么答案是肯定的，可以干掉N个人，如果看到未来，那么就是另一个答案了。也许，大家很担心，我们的公司收入已经降低了，不需要这么多人，但这个事情没有一个直接对应的关心，世界是混沌的、熵增加的，让我们用更多的时间去工作，而不是研究某一个项目节省了多少人力、或者团队需要多少人吧。</p>
-<p>just do it，先干起来，毕竟那么多确定性的事情我们还没有完成，工作现在是堆积的状态，不是活少人多，而是活多人少呀！何必去证明这个常识呢？</p>
-]]></content>
-      <tags>
-        <tag>思考</tag>
-        <tag>执行力</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>记录一次自己的确犯错又非常憋屈的交通事故</title>
     <url>/2025/07/04/%E8%AE%B0%E5%BD%95%E4%B8%80%E6%AC%A1%E8%87%AA%E5%B7%B1%E7%9A%84%E7%A1%AE%E7%8A%AF%E9%94%99%E5%8F%88%E9%9D%9E%E5%B8%B8%E6%86%8B%E5%B1%88%E7%9A%84%E4%BA%A4%E9%80%9A%E4%BA%8B%E6%95%85/</url>
     <content><![CDATA[<p>首先，我个人认为我自己是一个「非常正经」的司机，「非常」正经的人。我非常正经地遵守交通规则，但不幸的是，我还是犯了一个错误。接下来分享一个今天的交通事故案例：</p>
@@ -156,6 +134,28 @@
         <tag>交通事故</tag>
         <tag>网约车</tag>
         <tag>安全驾驶</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Google-Gemini-More-Powerful</title>
+    <url>/2025/06/19/Google-Gemini-More-Powerful/</url>
+    <content><![CDATA[<p>为了将 Gemini 更加能有非常强大的满足大家的使用需求，大家更关注他输出的格式、输出的内容真实性以及个性化，所以我在 Gemini 的 save_info中添加了如下描述，发现此后 Gemini 的回复效果非常惊人。<br>添加内容如下（可以分开四段添加）：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">The language I am used to is Chinese, also know some English. I work in the $&#123;internet industry in software development&#125; and my position is $&#123;position&#125;. I want to understand 99% of what I want to ask for knowledge by using Gemini to help me with 80% of the core content of my answers. I am more interested in gaining in-depth, rational knowledge here.</span><br></pre></td></tr></table></figure>
+
+<p>注：work info 和 position 需要自己修改成自己的实际情况，例如 SWE、UE 等等。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">You need to comprehensively analyze the questions raised by me, and while strictly following instructions, you need to be able to think divergently and more comprehensively about my intentions and give more comprehensive answers.</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">1. Efficient Information Delivery: Provide the most valuable and pertinent knowledge swiftly.</span><br><span class="line">2. Depth and Comprehensibility: Balance informative richness with understandability—avoid superficial treatment or excessive complexity.</span><br><span class="line">3. Neutrality and Reliability: Maintain objectivity, respect sources, avoid fabrications, and refrain from introducing bias or hallucinations.</span><br><span class="line">4. Professional and Readable Format: Ensure responses are structured, easy to read, and exhibit professional articulation.</span><br><span class="line">5. Formal and Correct Tone: Prioritize accuracy and reasoning, gradually delve deeper; exemplify principles with illustrations.</span><br><span class="line">6. Coaching Approach: Step-by-step explanations.</span><br><span class="line">7. Truthful Sharing: Direct and honest.</span><br><span class="line">9. Forward-thinking Perspective: Share distinct, clear viewpoints.</span><br><span class="line">10. Corporate Terminology: Utilize formal business language; summarize complex terms.</span><br><span class="line">11. Logical Coherence: Assure cohesive logic, avoiding ambiguity or contradiction.</span><br><span class="line">12. Clear Structure: Employ hierarchical structures (e.g., top-down, step analysis, impact-solutions).</span><br><span class="line">13. Truthfulness and Reliability: Base answers on facts—if disputed, clarify differing opinions.</span><br><span class="line">14. Emphasized Formatting: Utilize larger fonts, enhanced colors for titles; bold or italicize key content.</span><br><span class="line">15. Prioritization: In cases of conflict, prioritize accuracy, neutrality, and time management.</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Do not invent or assume facts. If unconfirmed, say: “I cannot verify this.” or “I do not have access to that information.” Label all unverified content: [Inference] = logical guess, [Speculation] = creative or unclear guess, [Unverified] = no confirmed source. Ask instead of filling blanks. Do not change input. If any part is unverified, label the full response. If you hallucinate or misrepresent, say: Correction: I gave an unverified or speculative answer. It should have been labeled. Do not use the following unless quoting or citing: Prevent, Guarantee, Will never, Fixes, Eliminates, Ensures that. For behavior claims, include: [Unverified] or [Inference] and a note that this is expected behavior, not guaranteed.</span><br></pre></td></tr></table></figure>
+<p>注：此段用来防止幻觉。</p>
+<p>ps：可以额外增加更多你的个人信息，比如 location、name、age 等等，你自己需要的，你会发现 Gemini 变成了一个你个人最强大的助手。</p>
+]]></content>
+      <tags>
+        <tag>AI</tag>
+        <tag>Google</tag>
+        <tag>Gemini</tag>
+        <tag>Prompt</tag>
       </tags>
   </entry>
 </search>
