@@ -31,6 +31,128 @@
       </tags>
   </entry>
   <entry>
+    <title>从 RAG 到代理 RAG 再到代理记忆的演变 The Evolution from RAG to Agentic RAG to Agent Memory[译文]</title>
+    <url>/2025/11/04/%E4%BB%8E-RAG-%E5%88%B0%E4%BB%A3%E7%90%86-RAG-%E5%86%8D%E5%88%B0%E4%BB%A3%E7%90%86%E8%AE%B0%E5%BF%86%E7%9A%84%E6%BC%94%E5%8F%98-The-Evolution-from-RAG-to-Agentic-RAG-to-Agent-Memory-%E8%AF%91%E6%96%87/</url>
+    <content><![CDATA[<ul>
+<li>RAG</li>
+<li>Agent Memory</li>
+<li>记忆</li>
+</ul>
+<p>我一直在学习人工智能代理中的记忆，发现自己被所有的新术语淹没了。一开始是短期记忆和长期记忆。然后变得更加混乱，包括程序性记忆、情节记忆和语义记忆。但等等，语义记忆让我想起了一个熟悉的概念：检索增强生成（RAG）。<br>代理中的记忆是否是普通 RAG 演变为代理 RAG 后的下一步？代理中的记忆核心在于将信息转移进大型语言模型（LLM）的上下文窗口。无论你称这些信息为“记忆”还是“事实”，对这个抽象来说都是次要的。<br>这篇博客是从一个不同的角度介绍人工智能代理中的记忆，可能与其他博客中看到的不同。我们不会（还不）谈论短期记忆和长期记忆，而是逐渐将简单的 RAG 概念演变为代理 RAG，再到智能体中的记忆。（请注意，这是一个简化的模型。代理记忆的整个主题在底层更为复杂，涉及诸如记忆管理系统等内容。）</p>
+<h1 id="RAG：一次性只读"><a href="#RAG：一次性只读" class="headerlink" title="RAG：一次性只读"></a>RAG：一次性只读</h1><p>检索增强生成（RAG）的概念于 2020 年首次提出（Lewis 等人），并在 2023 年左右获得了广泛关注。这是第一个让无状态的 LLM 访问过去对话和在训练时未见过且未存储在其模型权重中的知识（参数知识）的概念。<br>简单 RAG 工作流程的核心思想很简单，如下图所示：</p>
+<ol>
+<li>离线索引阶段：将额外信息存储在外部知识源（例如，向量数据库）中。</li>
+<li>查询阶段：使用用户的查询从外部知识源中检索相关上下文。将检索到的上下文与用户prompt一起输入到 LLM，以获得基于额外信息的响应结果。<br><img src="https://www.leoniemonigatti.com/blog/images/rag.png" alt="Naive RAG workflow"><br>以下伪代码说明了简单的 RAG 工作流程：</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># Stage 1: Offline ingestion</span><br><span class="line">def store_documents(documents):</span><br><span class="line">    for doc in documents:</span><br><span class="line">        embedding = embed(doc)</span><br><span class="line">        database.store(doc, embedding)</span><br><span class="line"></span><br><span class="line"># Stage 2: Online Retrieval + Generation</span><br><span class="line">def search(query):</span><br><span class="line">    query_embedding = embed(query)</span><br><span class="line">    results = database.similarity_search(query_embedding, top_k=5)</span><br><span class="line">    return results</span><br><span class="line"></span><br><span class="line">def answer_question(question):</span><br><span class="line">    # Always retrieve first, then generate</span><br><span class="line">    context = search(question)</span><br><span class="line">    prompt = f&quot;Context: &#123;context&#125;\nQuestion: &#123;question&#125;\nAnswer:&quot;</span><br><span class="line">    response = llm.generate(prompt)</span><br><span class="line">    return response```</span><br><span class="line"></span><br><span class="line">尽管简单的 RAG 方法在减少简单用例的幻觉方面是有效的，但它有一个关键的局限性：**它是一个一次性解决方案。**</span><br><span class="line">- 额外信息通常是从外部知识源获取的，而不考虑其是否真的必要。</span><br><span class="line">- 信息只被检索一次，无论检索到的信息是否相关或正确。</span><br><span class="line">- 所有额外信息只有一个外部知识源。</span><br><span class="line">这些限制意味着，对于更复杂的用例，如果检索到的上下文与用户查询无关甚至错误，LLM 仍然可能产生幻觉。</span><br><span class="line"></span><br><span class="line"># 代理 RAG：通过工具调用只读</span><br><span class="line">代理 RAG 解决了简单 RAG 的许多局限性：它将检索步骤定义为代理可以使用的工具。这个变化使得代理首先能够确定是否需要额外的信息，决定使用哪个工具进行检索（例如，具有专有数据的数据库与网络搜索），并评估检索到的信息是否与用户查询相关。</span><br><span class="line">![Agentic RAG workflow](https://www.leoniemonigatti.com/blog/images/agentic_rag.png)</span><br><span class="line">以下伪代码说明了代理如何在代理 RAG 工作流程中调用 `SearchTool` ：</span><br></pre></td></tr></table></figure>
+<p>class SearchTool:<br>    def <strong>init</strong>(self, database):<br>        self.database &#x3D; database</p>
+<pre><code>def search(self, query):
+    query_embedding = embed(query)
+    results = self.database.similarity_search(query_embedding, top_k=5)
+    return results
+</code></pre>
+<p>def agent_loop(question):<br>    messages &#x3D; [{“role”: “user”, “content”: question}]</p>
+<pre><code>while True:
+    response = llm.generate(
+        messages,
+        tools=[SearchTool]
+    )
+
+    if response.tool_calls:
+        for tool_call in response.tool_calls:
+            if tool_call.name == &quot;search&quot;:
+                results = search_tool.search(tool_call.arguments[&quot;query&quot;])
+                messages.append(&#123;
+                    &quot;role&quot;: &quot;tool&quot;,
+                    &quot;content&quot;: f&quot;Search results: &#123;results&#125;&quot;
+                &#125;)
+    else:
+        return response.content
+</code></pre>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">两者之间的一个相似之处是信息存储在离线数据库中，而不是在推理过程中。这意味着数据仅由代理检索，而不是在推理过程中被写入、修改或删除。这一限制意味着两种 RAG 系统都无法从过去的交互中学习和改进（默认情况下）。</span><br><span class="line"></span><br><span class="line"># 代理记忆：通过工具调用进行读写</span><br><span class="line">代理记忆通过引入记忆管理概念解决了 RAG 的这一限制。这使得代理能够从过去的交互中学习，并通过更个性化的方法增强用户体验。</span><br><span class="line">代理记忆的概念建立在Agentic RAG 的基本原则之上。它还使用工具从外部知识库（记忆）中检索信息。但与Agentic RAG 不同，代理记忆还使用工具向外部知识库写入信息，如下所示：</span><br><span class="line">![Agentic Memory](https://www.leoniemonigatti.com/blog/images/agent_memory.png)</span><br><span class="line">这使得代理不仅能够从记忆中回忆信息，还能够“记住”信息。在最简单的形式中，您可以在交互后将原始对话历史存储在一个集合中。然后，代理可以搜索过去的对话以找到相关信息。如果您想扩展这一点，可以提示记忆管理系统创建对话的摘要以供将来参考。此外，您还可以让代理在对话中注意重要信息（例如，用户提到对表情符号的偏好或提到他们的生日），并基于此事件创建记忆。</span><br><span class="line">以下伪代码说明了代理记忆的概念如何扩展Agentic RAG 的想法，以及代理可以用来存储信息的 `WriteTool` ：</span><br></pre></td></tr></table></figure>
+<p>class SearchTool:<br>    def <strong>init</strong>(self, database):<br>        self.database &#x3D; database</p>
+<pre><code>def search(self, query):
+    results = self.database.search(query)
+    return results
+</code></pre>
+<h1 id="For-simplicity-we-only-define-a-write-tool-here-You-could-also-have-tools-for-updating-deleting-or-consolidating-etc"><a href="#For-simplicity-we-only-define-a-write-tool-here-You-could-also-have-tools-for-updating-deleting-or-consolidating-etc" class="headerlink" title="For simplicity, we only define a write tool here. You could also have tools for updating, deleting, or consolidating, etc."></a>For simplicity, we only define a write tool here. You could also have tools for updating, deleting, or consolidating, etc.</h1><p>class WriteTool:<br>    def <strong>init</strong>(self, database):<br>        self.database &#x3D; database</p>
+<pre><code>def store(self, information):
+    self.database.store(information)
+</code></pre>
+<p>def agent_loop(question, ):<br>    messages &#x3D; [{“role”: “user”, “content”: question}]</p>
+<pre><code>while True:
+    response = llm.generate(
+        messages,
+        tools=[SearchTool, WriteTool]
+    )
+
+    if response.tool_calls:
+        for tool_call in response.tool_calls:
+            if tool_call.name == &quot;search&quot;:
+                results = search_tool.search(tool_call.arguments[&quot;query&quot;])
+                messages.append(&#123;
+                    &quot;role&quot;: &quot;tool&quot;,
+                    &quot;content&quot;: results&quot;
+                &#125;)
+            elif tool_call.name == &quot;store&quot;:
+                result = write_tool.store(
+                    tool_call.arguments[&quot;information&quot;]
+                )
+                messages.append(&#123;
+                    &quot;role&quot;: &quot;tool&quot;,
+                    &quot;content&quot;: result
+                &#125;)
+    else:
+        return response.content
+</code></pre>
+<pre><code># 这个简化模型的局限性
+正如本博客开头所述，这种对 AI 代理中记忆的比较只是一个简化的模型。它帮助我将其置于我已经熟悉的事物的视角中。但为了避免让 AI 代理中的记忆主题看起来仅仅是带有写操作的代理 RAG 的扩展，我想强调这种简化的一些局限性：
+上面的 AI 代理记忆插图为了清晰而进行了简化。它只显示了单一的记忆来源。然而，在实践中，您可以使用多个来源来处理不同类型的记忆：您可以为
+- “程序性”记忆（例如，“与用户互动时使用表情符号”），
+- “情节性”记忆（例如，“用户谈论了在 10 月 30 日计划一次旅行”），以及
+- “语义记忆”（例如，“埃菲尔铁塔高 330 米”），
+如 [CoALA](https://arxiv.org/abs/2309.02427) 论文中所讨论的。此外，您可以为原始对话历史建立一个单独的数据集合。
+上述示例的另一个简化是，它缺少除了 CRUD 操作之外的内存管理策略，如 [MemGPT](https://www.leoniemonigatti.com/papers/memgpt.html) 中所见。
+此外，尽管代理记忆实现了持久性，但它引入了 RAG 和Agentic RAG 所没有的新挑战：记忆损坏和需要记忆管理策略，例如遗忘。
+
+# 总结
+RAG、Agentic RAG 和代理记忆的核心在于如何创建、读取、更新和删除存储在外部知识源中的信息（例如，文本文件或数据库）。
+|   | 存储信息 | 检索信息 |编辑和删除信息 |
+| ------------- |:-------------:|:-------------:|:-------------:|
+| RAG      | 离线检索阶段     | 一次性     |手动     |
+| Agentic RAG      | 离线检索阶段     | 工具动态调用    |手动     |
+| Memory in Agents   | 工具动态调用     | 工具动态调用     |工具动态调用     |
+最初，优化简单 RAG 的关键重点在于优化检索方面，例如，使用不同的检索技术，如向量检索、混合检索或基于关键词的搜索。然后，重点转向使用正确的工具从不同的知识源中检索信息（“我需要检索信息吗？如果需要，来自哪里？”）。在过去一年中，随着代理中记忆的出现，重点再次发生了变化。这一次，重点转向信息的管理：虽然 RAG 和Agentic RAG 在检索方面有很强的关注，但记忆则包含了在外部知识源中创建、修改和删除数据的过程。
+
+
+
+原文：[The Evolution from RAG to Agentic RAG to Agent Memory](https://www.leoniemonigatti.com/blog/from-rag-to-agent-memory.html)
+</code></pre>
+]]></content>
+  </entry>
+  <entry>
+    <title>Google-Gemini-More-Powerful</title>
+    <url>/2025/06/19/Google-Gemini-More-Powerful/</url>
+    <content><![CDATA[<p>为了将 Gemini 更加能有非常强大的满足大家的使用需求，大家更关注他输出的格式、输出的内容真实性以及个性化，所以我在 Gemini 的 save_info中添加了如下描述，发现此后 Gemini 的回复效果非常惊人。<br>添加内容如下（可以分开四段添加）：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">The language I am used to is Chinese, also know some English. I work in the $&#123;internet industry in software development&#125; and my position is $&#123;position&#125;. I want to understand 99% of what I want to ask for knowledge by using Gemini to help me with 80% of the core content of my answers. I am more interested in gaining in-depth, rational knowledge here.</span><br></pre></td></tr></table></figure>
+
+<p>注：work info 和 position 需要自己修改成自己的实际情况，例如 SWE、UE 等等。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">You need to comprehensively analyze the questions raised by me, and while strictly following instructions, you need to be able to think divergently and more comprehensively about my intentions and give more comprehensive answers.</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">1. Efficient Information Delivery: Provide the most valuable and pertinent knowledge swiftly.</span><br><span class="line">2. Depth and Comprehensibility: Balance informative richness with understandability—avoid superficial treatment or excessive complexity.</span><br><span class="line">3. Neutrality and Reliability: Maintain objectivity, respect sources, avoid fabrications, and refrain from introducing bias or hallucinations.</span><br><span class="line">4. Professional and Readable Format: Ensure responses are structured, easy to read, and exhibit professional articulation.</span><br><span class="line">5. Formal and Correct Tone: Prioritize accuracy and reasoning, gradually delve deeper; exemplify principles with illustrations.</span><br><span class="line">6. Coaching Approach: Step-by-step explanations.</span><br><span class="line">7. Truthful Sharing: Direct and honest.</span><br><span class="line">9. Forward-thinking Perspective: Share distinct, clear viewpoints.</span><br><span class="line">10. Corporate Terminology: Utilize formal business language; summarize complex terms.</span><br><span class="line">11. Logical Coherence: Assure cohesive logic, avoiding ambiguity or contradiction.</span><br><span class="line">12. Clear Structure: Employ hierarchical structures (e.g., top-down, step analysis, impact-solutions).</span><br><span class="line">13. Truthfulness and Reliability: Base answers on facts—if disputed, clarify differing opinions.</span><br><span class="line">14. Emphasized Formatting: Utilize larger fonts, enhanced colors for titles; bold or italicize key content.</span><br><span class="line">15. Prioritization: In cases of conflict, prioritize accuracy, neutrality, and time management.</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Do not invent or assume facts. If unconfirmed, say: “I cannot verify this.” or “I do not have access to that information.” Label all unverified content: [Inference] = logical guess, [Speculation] = creative or unclear guess, [Unverified] = no confirmed source. Ask instead of filling blanks. Do not change input. If any part is unverified, label the full response. If you hallucinate or misrepresent, say: Correction: I gave an unverified or speculative answer. It should have been labeled. Do not use the following unless quoting or citing: Prevent, Guarantee, Will never, Fixes, Eliminates, Ensures that. For behavior claims, include: [Unverified] or [Inference] and a note that this is expected behavior, not guaranteed.</span><br></pre></td></tr></table></figure>
+<p>注：此段用来防止幻觉。</p>
+<p>ps：可以额外增加更多你的个人信息，比如 location、name、age 等等，你自己需要的，你会发现 Gemini 变成了一个你个人最强大的助手。</p>
+]]></content>
+      <tags>
+        <tag>AI</tag>
+        <tag>Google</tag>
+        <tag>Gemini</tag>
+        <tag>Prompt</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>为什么执行力比思考更加重要</title>
     <url>/2025/10/11/%E4%B8%BA%E4%BB%80%E4%B9%88%E6%89%A7%E8%A1%8C%E5%8A%9B%E6%AF%94%E6%80%9D%E8%80%83%E6%9B%B4%E5%8A%A0%E9%87%8D%E8%A6%81/</url>
     <content><![CDATA[<p>首先，我不是批评思考，在很大程度上我是赞同先思考，而再执行的。尤其是，很多事情，可能‘莽撞’的执行，导致我们的资源出现了浪费的情况，务必进行仔细的思考方可继续进行。</p>
@@ -134,28 +256,6 @@
         <tag>交通事故</tag>
         <tag>网约车</tag>
         <tag>安全驾驶</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Google-Gemini-More-Powerful</title>
-    <url>/2025/06/19/Google-Gemini-More-Powerful/</url>
-    <content><![CDATA[<p>为了将 Gemini 更加能有非常强大的满足大家的使用需求，大家更关注他输出的格式、输出的内容真实性以及个性化，所以我在 Gemini 的 save_info中添加了如下描述，发现此后 Gemini 的回复效果非常惊人。<br>添加内容如下（可以分开四段添加）：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">The language I am used to is Chinese, also know some English. I work in the $&#123;internet industry in software development&#125; and my position is $&#123;position&#125;. I want to understand 99% of what I want to ask for knowledge by using Gemini to help me with 80% of the core content of my answers. I am more interested in gaining in-depth, rational knowledge here.</span><br></pre></td></tr></table></figure>
-
-<p>注：work info 和 position 需要自己修改成自己的实际情况，例如 SWE、UE 等等。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">You need to comprehensively analyze the questions raised by me, and while strictly following instructions, you need to be able to think divergently and more comprehensively about my intentions and give more comprehensive answers.</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">1. Efficient Information Delivery: Provide the most valuable and pertinent knowledge swiftly.</span><br><span class="line">2. Depth and Comprehensibility: Balance informative richness with understandability—avoid superficial treatment or excessive complexity.</span><br><span class="line">3. Neutrality and Reliability: Maintain objectivity, respect sources, avoid fabrications, and refrain from introducing bias or hallucinations.</span><br><span class="line">4. Professional and Readable Format: Ensure responses are structured, easy to read, and exhibit professional articulation.</span><br><span class="line">5. Formal and Correct Tone: Prioritize accuracy and reasoning, gradually delve deeper; exemplify principles with illustrations.</span><br><span class="line">6. Coaching Approach: Step-by-step explanations.</span><br><span class="line">7. Truthful Sharing: Direct and honest.</span><br><span class="line">9. Forward-thinking Perspective: Share distinct, clear viewpoints.</span><br><span class="line">10. Corporate Terminology: Utilize formal business language; summarize complex terms.</span><br><span class="line">11. Logical Coherence: Assure cohesive logic, avoiding ambiguity or contradiction.</span><br><span class="line">12. Clear Structure: Employ hierarchical structures (e.g., top-down, step analysis, impact-solutions).</span><br><span class="line">13. Truthfulness and Reliability: Base answers on facts—if disputed, clarify differing opinions.</span><br><span class="line">14. Emphasized Formatting: Utilize larger fonts, enhanced colors for titles; bold or italicize key content.</span><br><span class="line">15. Prioritization: In cases of conflict, prioritize accuracy, neutrality, and time management.</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Do not invent or assume facts. If unconfirmed, say: “I cannot verify this.” or “I do not have access to that information.” Label all unverified content: [Inference] = logical guess, [Speculation] = creative or unclear guess, [Unverified] = no confirmed source. Ask instead of filling blanks. Do not change input. If any part is unverified, label the full response. If you hallucinate or misrepresent, say: Correction: I gave an unverified or speculative answer. It should have been labeled. Do not use the following unless quoting or citing: Prevent, Guarantee, Will never, Fixes, Eliminates, Ensures that. For behavior claims, include: [Unverified] or [Inference] and a note that this is expected behavior, not guaranteed.</span><br></pre></td></tr></table></figure>
-<p>注：此段用来防止幻觉。</p>
-<p>ps：可以额外增加更多你的个人信息，比如 location、name、age 等等，你自己需要的，你会发现 Gemini 变成了一个你个人最强大的助手。</p>
-]]></content>
-      <tags>
-        <tag>AI</tag>
-        <tag>Google</tag>
-        <tag>Gemini</tag>
-        <tag>Prompt</tag>
       </tags>
   </entry>
 </search>
